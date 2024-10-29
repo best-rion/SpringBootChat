@@ -1,0 +1,38 @@
+.right
+{
+	text-align: right;
+}
+
+.right .text
+{
+	background-color: #6af158;
+}
+
+.left
+{
+	text-align: left;
+}
+
+.left .text
+{
+	background-color: #aabaff;
+}
+
+.text
+{
+	padding: 10px;
+	margin: 5px;
+	border-radius: 10px;
+}
+
+#conversation
+{
+	margin-bottom: 150px !important;
+}
+
+#message-form
+{
+	position: fixed !important;
+	bottom: 0 !important;
+	margin-bottom: 50px;
+}

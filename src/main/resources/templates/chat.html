@@ -16,48 +16,46 @@
 		    Javascript and reload this page!
 		</h2>
 	</noscript>
-<div id="main-content" class="container bg-warning">
+	<div id="main-content" class="container bg-warning">
 
-    <div class="row">
-        <div class="col-md-12">
             <table id="conversation" class="table">
                 <thead>
                 <tr>
-                    <th><h3 class="text-info" th:text="${receiver}"></h3></th>
+                    <th><h2 class="text-info bg-white" th:text="${friend}"></h2></th>
                 </tr>
                 </thead>
                 <tbody id="chat">
+				<div id="margin">
 					<tr th:each="message: ${messages}">
-						<td th:unless="${message.sender}==${username}" class="left">
+						<td th:unless="${message.sender}==${principal}" class="left">
 							<p><span class="text" th:text="${message.content}"><span></p>
-							<small  class="text-secondary" th:text="${message.time}"></small>
+							<small class="date" th:text="${message.time}"></small>
 						</td>
 						
-						<td th:if="${message.sender}==${username}" class="right">
+						<td th:if="${message.sender}==${principal}" class="right">
 							<p><span class="text" th:text="${message.content}"><span></p>
-							<small  class="text-secondary mx-2 mb-3" th:text="${message.time}"></small>
+							<small class="date" th:text="${message.time}"></small>
 							(
-								<span th:if="${message.seen}">Seen</span>
-								<span th:unless="${message.seen}">Unseen</span>
+								<span th:if="${message.seen}" class="seen">Seen</span>
+								<span th:unless="${message.seen}" class="unseen">Unseen</span>
 							)
 						</td>
 					</tr>
+				</div>
                 </tbody>
             </table>
-        </div>
-    </div>
 	
 	
 		<form class="form-inline bg-success mx-auto" id="message-form">
 		    <div class="form-group">
 		        <label for="message">MESSAGE:</label>
-				<input th:value="${username}" type="text" id="username" hidden>
-				<input th:value="${receiver}" type="text" id="receiver" hidden>
+				<input th:value="${principal}" type="text" id="principal" hidden>
+				<input th:value="${friend}" type="text" id="friend" hidden>
 		        <input type="text" id="message" class="form-control" placeholder="Your message here..." >
 		    </div>
 		    <button id="send" class="btn btn-default" type="submit">Send</button>
 		</form>
 	
-</div>
+	</div>
 </body>
 </html>

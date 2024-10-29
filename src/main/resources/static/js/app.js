@@ -1,21 +1,43 @@
+function formatCurrentDate(date)
+{
+    // Options for date and time formatting
+    const options = {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    };
+
+    // Format date
+    return new Intl.DateTimeFormat('en-US', options).format(date).replace(',', '');
+}
+
 const stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/gs-guide-websocket'
 });
 
-var alreadyConnected = false;
 window.onload = ()=>{
-	if (!alreadyConnected)
-	{
-		stompClient.activate();
-	}
+	
+	stompClient.activate();
 	window.scroll(0, document.documentElement.scrollHeight)
+	
+	
+	// format date
+	
+	var dates = document.getElementsByClassName("date");
+	for (var i=0; i< dates.length; i++)
+	{
+		var d = new Date(dates[i].innerText)
+		dates[i].innerHTML = formatCurrentDate(d);
+	}
 }
 
 stompClient.onConnect = (frame) => {
-    setConnected(true);
     console.log('Connected: ' + frame +'End of frame');
-    stompClient.subscribe('/user/queue/private', (greeting) => {
-        showGreeting(JSON.parse(greeting.body));
+    stompClient.subscribe('/user/queue/private', (message) => {
+        showMessage(JSON.parse(message.body));
     });
 };
 
@@ -28,20 +50,8 @@ stompClient.onStompError = (frame) => {
     console.error('Additional details: ' + frame.body);
 };
 
-function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
-    if (connected) {
-        $("#conversation").show();
-    }
-    else {
-        $("#conversation").hide();
-    }
-}
-
 window.onbeforeunload = function () {
 	stompClient.deactivate();
-	setConnected(false);
 	console.log("Disconnected");
 };
 
@@ -49,38 +59,23 @@ function sendMessage() {
 	
 	if ($("#message").val() != '')
 	{
-		var receiver = $("#receiver").val();
+		let friend = $("#friend").val();
+		
 		stompClient.publish({
-		    destination: "/app/receiver/"+receiver,
+		    destination: "/app/receiver/"+friend,
 		    body: JSON.stringify({'content': $("#message").val()})
 		});
 
 		$("#message").val('');
 	}
 }
-function formatCurrentDate() {
-    const now = new Date();
 
-    // Options for date and time formatting
-    const options = {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    };
-
-    // Format date
-    return new Intl.DateTimeFormat('en-US', options).format(now).replace(',', '');
-}
-
-function showGreeting(message) {
-
-	var d = formatCurrentDate();
-	if (message.sender === $("#username").val())
+function showMessage(message)
+{
+	var d = formatCurrentDate(new Date());
+	if (message.sender === $("#principal").val())
 	{
-		if (message.receiver === $("#receiver").val())
+		if (message.receiver === $("#friend").val()) // OTHERWISE MessageController.java WILL TRY TO PUSH MY REPLIES TO OTHER FRIENDS IN THI
 		{
 			// Has it been seen???
 			var status = "Unseen"
@@ -92,26 +87,24 @@ function showGreeting(message) {
 			$("#chat").append("<tr>"+
 								"<td class=\"right\">"+
 									"<p><span class=\"text\">"+message.content+"</span><p>"+
-									"<small  class=\"text-secondary\">"+d+"</small>"+
-									"(<span>"+status+"</span>)"+
+									"<small  class=\"date\">"+d+"</small>"+
+									"(<span class=\""+status.toLowerCase()+"\">"+status+"</span>)"+
 								"</td>"+
 							  "</tr>");
 		}
 	}
-	else
+	else // SOMEONE ELSE SENT THIS MESSAGE
 	{
-
-		if (message.sender === $("#receiver").val())
+		if (message.sender === $("#friend").val())
 		{
 			$("#chat").append("<tr>"+
 								"<td class=\"left\">"+
 									"<p><span class=\"text\">"+message.content+"</span><p>"+
-									"<small  class=\"text-secondary\">"+d+"</small>"+
+									"<small  class=\"date\">"+d+"</small>"+
 								"</td>"+
 							  "</tr>");
 							  
-		  // If it is printed on the left side. it means it has been seen
-
+			//	If it has been printed on the left side. it means I(the recipient of this message) have seen it.
 		  	  	fetch
 		  	  	(
 		  	  		"http://localhost:8080/seen",
@@ -130,7 +123,6 @@ function showGreeting(message) {
 		  	  	})
 		}
 	}
-    
 }
 
 $(function () {

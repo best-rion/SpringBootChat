@@ -14,7 +14,6 @@ public class SeenController {
 	
 	@Autowired
 	MessageRepository messageRepository;
-
 	
 	@PutMapping(value="/seen")
 	public String seen(@RequestBody String id)
@@ -22,6 +21,7 @@ public class SeenController {
 		Message message = messageRepository.findById(Integer.parseInt(id));
 		message.setSeen(true);
 		messageRepository.save(message);
+		
 		return "1";
 	}
 }

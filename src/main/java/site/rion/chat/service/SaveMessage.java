@@ -15,7 +15,7 @@ public class SaveMessage
 	@Autowired
 	MessageRepository messageRepository;
 	
-	public int save(String sender, String receiver, String content)
+	public Message save(String sender, String receiver, String content)
 	{
 		Message newMessage = new Message();
 		
@@ -28,8 +28,6 @@ public class SaveMessage
 		newMessage.setSeen(false);
 		
 		messageRepository.save(newMessage);
-		
-		System.out.println(newMessage.getId());
-		return newMessage.getId();
+		return newMessage;
 	}
 }

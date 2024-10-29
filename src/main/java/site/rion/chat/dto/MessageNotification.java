@@ -1,6 +1,6 @@
 package site.rion.chat.dto;
 
-public class UnseenDTO
+public class MessageNotification
 {
 	public String sender;
 	public int numberOfMessages;

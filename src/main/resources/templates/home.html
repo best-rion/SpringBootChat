@@ -15,8 +15,8 @@
     <h2>User</h2>
 
     <ul>
-        <li th:each="user: ${users}">
-            <a th:href="@{/chat/}+${user.sender}" th:text="${user.sender}"></a>(💬 <span th:text="${user.numberOfMessages}"></span>)
+        <li th:each="notification: ${notifications}">
+            <a th:href="@{/chat/}+${notification.sender}" th:text="${notification.sender}"></a>(💬 <span th:text="${notification.numberOfMessages}"></span>)
         </li>
     </ul>
     

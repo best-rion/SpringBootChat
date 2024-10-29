@@ -11,8 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import site.rion.chat.dto.MessageDTO;
-import site.rion.chat.dto.UnseenDTO;
+import site.rion.chat.dto.MessageNotification;
 import site.rion.chat.model.ChatUser;
 import site.rion.chat.model.Message;
 import site.rion.chat.repository.MessageRepository;
@@ -29,65 +28,49 @@ public class HomeController {
 	
 	@GetMapping("/")
 	public String home(Model model, Authentication auth){
-
-		String principalUsername = auth.getName();
-
-		List<ChatUser> users = userRepository.findAll();
-
-		ChatUser currentUser = null;
-		for (ChatUser user: users)
-		{
-			if (user.getUsername().equals(principalUsername))
-			{
-				currentUser = user;
-			}
-		}
-		users.remove(currentUser);
 		
-		currentUser.setActive(true);
+		// ALL USER EXCEPT ME
+		List<ChatUser> users = userRepository.findAllExcept(auth.getName());
+		
+		// I AM ONLINE NOW
+		ChatUser currentUser = userRepository.findByUsername(auth.getName());
+		currentUser.setActive(true);// For now this does nothing. I will find out a way to determine if a user is online.
 		userRepository.save(currentUser);
 		
 		
-		// Unseen Messages
-		
-		List<UnseenDTO> unseenDTOs = new ArrayList<>();
+		// MESSAGE NOTIFICATION( HOW MANY MESSAGE ARE PENDING) PER USER
+		List<MessageNotification> notifications = new ArrayList<>();
 		for (ChatUser user: users)
 		{
-			int messageCount = messageRepository.numOfUnseenMessageBySender(principalUsername, user.getUsername());
+			MessageNotification notification = new MessageNotification();
 			
-			UnseenDTO unseenDTO = new UnseenDTO();
-			unseenDTO.sender = user.getUsername();
-			unseenDTO.numberOfMessages = messageCount;
+			notification.sender = user.getUsername();
+			notification.numberOfMessages = messageRepository.numOfUnseenMessageBySender(auth.getName(), user.getUsername());
 			
-			unseenDTOs.add(unseenDTO);
+			notifications.add(notification);
 		}
 		
-		
-		model.addAttribute("users", unseenDTOs);
+		model.addAttribute("notifications", notifications);
 		return "home";
 	}
 	
-	@GetMapping("/chat/{receiver}")
-	public String chat(Model model, @PathVariable String receiver, Authentication auth)
-	{	// SET UNSEEN TO SEEN
-		List<Message> unseenMessages = messageRepository.unseenMessageBySender(auth.getName(), receiver);
+	@GetMapping("/chat/{friend}")
+	public String chat(Model model, @PathVariable String friend, Authentication auth)
+	{	
+		// SET UNSEEN TO SEEN, ONLY MY FRIEND'S MESSSAGES
+		List<Message> unseenMessages = messageRepository.unseenMessageBySender(auth.getName(), friend);
 		for (Message message: unseenMessages)
 		{
 			message.setSeen(true);
 			messageRepository.save(message);
 		}
 		
-		// List of previous messages
-		List<Message> messages = messageRepository.findByPeople(auth.getName(), receiver);
-		List<MessageDTO> messageDTOs = new ArrayList<>();
-		for (Message message: messages)
-		{
-			MessageDTO messageDTO = new MessageDTO(message);
-			messageDTOs.add(messageDTO);
-		}
-		model.addAttribute("messages", messageDTOs);
-		model.addAttribute("username", auth.getName());
-		model.addAttribute("receiver", receiver);
+		// LIST OF ALL MESSAGES, MINE AND MY FRIEND'S
+		List<Message> messages = messageRepository.findByPeople(auth.getName(), friend);
+		
+		model.addAttribute("messages", messages);
+		model.addAttribute("principal", auth.getName());
+		model.addAttribute("friend", friend);
 		return "chat";
 	}
 }

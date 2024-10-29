@@ -36,3 +36,20 @@
 	bottom: 0 !important;
 	margin-bottom: 50px;
 }
+
+.seen
+{
+	color: #3c763d;
+}
+.unseen
+{
+	color: #7f7f7f;
+}
+
+table th
+{
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background-color: #fcf8e3;
+}

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import site.rion.chat.dto.UserDTO;
+import site.rion.chat.dto.FormUser;
 import site.rion.chat.model.ChatUser;
 import site.rion.chat.repository.UserRepository;
 
@@ -26,13 +26,13 @@ public class AuthController {
 	@GetMapping("/signup")
 	public String signupGet(Model model)
 	{
-		model.addAttribute("userInfo", new UserDTO());
+		model.addAttribute("userInfo", new FormUser());
 		
 		return "signup";
 	}
 	
 	@PostMapping("/signup")
-	public String signupPost(@ModelAttribute UserDTO user)
+	public String signupPost(@ModelAttribute FormUser user)
 	{
     	if ( user.getPassword().equals(user.getConfirm_password()))
     	{

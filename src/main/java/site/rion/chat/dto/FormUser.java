@@ -1,7 +1,7 @@
 package site.rion.chat.dto;
 
 
-public class UserDTO
+public class FormUser
 {
 	private String username;
 	private String password;

@@ -1,4 +1,4 @@
-package site.rion.chat.controller;
+package site.rion.chat.ws;
 
 import java.security.Principal;
 
@@ -13,7 +13,6 @@ import org.springframework.web.util.HtmlUtils;
 import site.rion.chat.model.Message;
 import site.rion.chat.repository.MessageRepository;
 import site.rion.chat.service.SaveMessage;
-import site.rion.chat.ws.ReceivedMessage;
 
 
 @Controller

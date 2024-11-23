@@ -27,7 +27,7 @@ public class MessageController
 	@Autowired
 	private SimpMessagingTemplate simpMessagingTemplate;
 	
-	@MessageMapping("/receiver/{receiver}")
+	@MessageMapping("/send-to/{receiver}")
 	public void messaging(
 			@Payload ReceivedMessage receivedMessage,
 			@DestinationVariable String receiver,
@@ -37,10 +37,11 @@ public class MessageController
 		Message message = saveMessage.save( principal.getName(), receiver, HtmlUtils.htmlEscape(receivedMessage.getContent()) );
 	
 		simpMessagingTemplate.convertAndSendToUser( receiver , "/queue/private", message);
-		// Send this message to friend
-		Thread.sleep(100); // if he sees the message in 100 milliseconds, The database must have been updated.
-		message = messageRepository.findById(message.getId()); // Update message object to get update from database
+
+		Thread.sleep(100); // Wait 0.1sec to update seen status in database. See "SeenController" class, how it updates.
+		
+		message = messageRepository.findById(message.getId()); // Send the message back to me with correct seen status
+		
 		simpMessagingTemplate.convertAndSendToUser( principal.getName() , "/queue/private", message);
-		// Finally I got the message
 	}  
 }

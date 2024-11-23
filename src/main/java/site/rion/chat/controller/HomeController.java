@@ -27,19 +27,12 @@ public class HomeController {
 	MessageRepository messageRepository;
 	
 	@GetMapping("/")
-	public String home(Model model, Authentication auth){
-		
-		// ALL USER EXCEPT ME
+	public String home(Model model, Authentication auth)
+	{
 		List<ChatUser> users = userRepository.findAllExcept(auth.getName());
 		
-		// I AM ONLINE NOW
-		ChatUser currentUser = userRepository.findByUsername(auth.getName());
-		currentUser.setActive(true);// For now this does nothing. I will find out a way to determine if a user is online.
-		userRepository.save(currentUser);
-		
-		
-		// MESSAGE NOTIFICATION( HOW MANY MESSAGE ARE PENDING) PER USER
 		List<MessageNotification> notifications = new ArrayList<>();
+		
 		for (ChatUser user: users)
 		{
 			MessageNotification notification = new MessageNotification();
@@ -56,9 +49,9 @@ public class HomeController {
 	
 	@GetMapping("/chat/{friend}")
 	public String chat(Model model, @PathVariable String friend, Authentication auth)
-	{	
-		// SET UNSEEN TO SEEN, ONLY MY FRIEND'S MESSSAGES
+	{
 		List<Message> unseenMessages = messageRepository.unseenMessageBySender(auth.getName(), friend);
+		
 		for (Message message: unseenMessages)
 		{
 			message.setSeen(true);

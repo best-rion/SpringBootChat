@@ -1,4 +1,4 @@
-package site.rion.chat;
+package site.rion.chat.authentication;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

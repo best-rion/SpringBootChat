@@ -1,4 +1,4 @@
-package site.rion.chat.service;
+package site.rion.chat.authentication;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

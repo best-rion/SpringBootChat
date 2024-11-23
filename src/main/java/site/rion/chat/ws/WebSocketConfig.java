@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   public void configureMessageBroker(MessageBrokerRegistry config) {
     config.enableSimpleBroker("/queue");
     config.setApplicationDestinationPrefixes("/app");
-    config.setUserDestinationPrefix("/user");
+    config.setUserDestinationPrefix("/user"); //this enables one to one connection
   }
 
   @Override

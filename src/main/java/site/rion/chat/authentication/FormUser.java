@@ -1,4 +1,4 @@
-package site.rion.chat.dto;
+package site.rion.chat.authentication;
 
 
 public class FormUser

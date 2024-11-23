@@ -1,4 +1,4 @@
-package site.rion.chat.controller;
+package site.rion.chat.authentication;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import site.rion.chat.dto.FormUser;
 import site.rion.chat.model.ChatUser;
 import site.rion.chat.repository.UserRepository;
 

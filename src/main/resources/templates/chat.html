@@ -3,59 +3,157 @@
 <head>
     <title>Hello WebSocket</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+   
+	 <link rel="stylesheet" th:href="@{/css/main.css}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script th:src="@{/js/app.js}"></script>
+	
+	
+	<style>
+		#friend-name-div
+		{
+			display: flex;
+			background-color: rgb(255, 254, 223);
+		}
+		
+		#friend-name
+		{
+			margin: auto 0px;
+		}
+		
+		#conversation
+		{
+			margin-top: 10px;
+			background-color: bisque;
+			padding: 20px;
+		}
+
+		.message-div
+		{
+			width: 100%;
+			margin: 3px;
+		}
+
+		.message-box
+		{
+			max-width: 500px;
+			display: flex;
+		}
+
+		.left
+		{
+			margin-right: auto;
+			text-align: left;
+		}
+
+		.right
+		{
+			margin-left: auto;
+			text-align: right;
+		}
+
+		.message-box-inner
+		{
+			max-width: 100%;
+			padding: 10px;
+			border-radius: 10px;
+		}
+		
+		.inner-left
+		{
+			background-color: #d7bcff;
+		}
+
+		.inner-right
+		{
+			background-color: #b8fcc9;
+		}
+
+		.message-text
+		{
+			word-wrap: break-word;
+			margin: 0px;
+		}
+
+		.date
+		{
+			color: rgb(112, 112, 112);
+		}
+		
+		.date-div
+		{
+			font-size: 12px;
+		}
+		
+		
+		#form-div
+		{
+			width: 100%;
+			background-color: rgb(201, 232, 247);
+			padding: 10px 10px 20px 10px;
+		}
+		
+	</style>
+	
+	
 </head>
 <body>
 	<noscript>
 		<h2 style="color: #ff0000">
-			Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-		    enabled. Please enable
-		    Javascript and reload this page!
+			Seems your browser doesn't support Javascript!
 		</h2>
 	</noscript>
-	<div id="main-content" class="container bg-warning">
+	
+	<div class="container bg-white">
 
-            <table id="conversation" class="table">
-                <thead>
-                <tr>
-                    <th><h2 class="text-info bg-white" th:text="${friend}"></h2></th>
-                </tr>
-                </thead>
-                <tbody id="chat">
-				<div id="margin">
-					<tr th:each="message: ${messages}">
-						<td th:unless="${message.sender}==${principal}" class="left">
-							<p><span class="text" th:text="${message.content}"><span></p>
+		<div id="friend-name-div" class="sticky-top"><h2 id="friend-name" th:text="${friend}"></h2></div>
+		
+        <div id="conversation">
+
+			<div class="message-div" th:each="message: ${messages}">
+				
+				<div th:unless="${message.sender}==${principal}" class="message-box left">
+					<div class="message-box-inner left inner-left">
+						<p class="message-text" th:text="${message.content}"></p>
+						<div class="date-div">
 							<small class="date" th:text="${message.time}"></small>
-						</td>
-						
-						<td th:if="${message.sender}==${principal}" class="right">
-							<p><span class="text" th:text="${message.content}"><span></p>
+						</div>
+					</div>
+				</div>
+				
+				<div th:if="${message.sender}==${principal}" class="message-box right">
+					<div class="message-box-inner right inner-right">
+						<p class="message-text" th:text="${message.content}"></p>
+						<div class="date-div">
 							<small class="date" th:text="${message.time}"></small>
 							(
 								<span th:if="${message.seen}" class="seen">Seen</span>
 								<span th:unless="${message.seen}" class="unseen">Unseen</span>
 							)
-						</td>
-					</tr>
+						</div>
+					</div>
 				</div>
-                </tbody>
-            </table>
+				
+			</div>
+        </div>
 	
-	
-		<form class="form-inline bg-success mx-auto" id="message-form">
-		    <div class="form-group">
-		        <label for="message">MESSAGE:</label>
-				<input th:value="${principal}" type="text" id="principal" hidden>
-				<input th:value="${friend}" type="text" id="friend" hidden>
-		        <input type="text" id="message" class="form-control" placeholder="Your message here..." >
-		    </div>
-		    <button id="send" class="btn btn-default" type="submit">Send</button>
-		</form>
+		<div id="form-div" class="sticky-bottom">
+			<form id="message-form">
+				<div class="flex-grow-0 py-3 px-4 border-top">
+					<div class="input-group">
+						
+						<input th:value="${principal}" type="text" id="principal" hidden>
+						<input th:value="${friend}" type="text" id="friend" hidden>
+
+						<input type="text" id="message" class="form-control" placeholder="Type your message">
+						<button id="send" type="submit" class="btn btn-primary">Send</button>
+					</div>
+				</div>
+			</form>
+		</div>
 	
 	</div>
 </body>

@@ -19,12 +19,10 @@ public class SaveMessage
 	{
 		Message newMessage = new Message();
 		
-		Date time = new Date();
-		
 		newMessage.setSender(sender);
 		newMessage.setReceiver(receiver);;
 		newMessage.setContent(content);
-		newMessage.setTime(time);
+		newMessage.setTime( new Date() );
 		newMessage.setSeen(false);
 		
 		messageRepository.save(newMessage);
